@@ -3,7 +3,7 @@
 # This file contains the definition for the Bank class
 
 import account
-
+import storage 
     
 # predefined Saving accounts
 Acc_01 = account.SavingAccount()
@@ -40,6 +40,11 @@ class Bank:
 
         self.lastAccountNumber = lastAccountNumber
         self.bankName = bankName
+
+        # Define a constructor that populates the account list with data from json file
+        self.databaseAcc = storage.ReadDatabase()
+        pass
+
 
         # Define a constructor that populates the account list with hardcoded of three 
         # ChequingAccount instances and three SavingsAccount instances. 
