@@ -68,7 +68,7 @@ def WriteDatabase(allAccounts):
 
 
 
-# this code is testing the functionality of the account module
+# this code is testing the functionality of the storage module
 if __name__ == "__main__":
     print("Testing the storage implementation!")
     
@@ -113,34 +113,3 @@ if __name__ == "__main__":
     WriteDatabase(ExistingAccounts)
 
     exit()
-    student_data = accounts_from_file[0]
-
-    # Extract and print the student information
-    print(f"Account Number: {student_data['account_no']}")
-    print(f"Name: {student_data['name']}")
-    print(f"Type: {student_data['type']}")
-    print(f"Type: {student_data['interest']}")
-    print(f"Type: {student_data['balance']}")
-    print(f"Type: {student_data['overdraft_minbalance']}")
-
-    new_acc = 654
-    new_name = "Nice Name"
-    new_type = 2
-    new_interest = 3
-    new_balance = 6
-    new_overdraft_minbalance = 500
-
-    new_student = {"account_no": new_acc,
-    "name": new_name,
-    "type": new_type,
-    "interest": new_interest,
-    "balance": new_balance,
-    "overdraft_minbalance": new_overdraft_minbalance }
-
-    my_count = len(database_from_file)
-    print("\ndatabase elements: ", str(my_count))
-    database_from_file.append(new_student)
-
-    # Writing the list of dictionaries to a JSON file
-    with open('database.json', 'w') as file:
-        json.dump(database_from_file, file, indent=2)
