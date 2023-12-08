@@ -1,15 +1,15 @@
 [
   {
-    "account_no": 12345,
-    "name": "Alice Johnson",
+    "account_no": 101,
+    "name": "Saint Nicholas",
     "type": 1,
     "interest": 10,
     "balance": 0,
     "overdraft_minbalance": 1000
   },
   {
-    "account_no": 654,
-    "name": "Nice Name",
+    "account_no": 102,
+    "name": "Kris Kringle",
     "type": 2,
     "interest": 3,
     "balance": 0,
