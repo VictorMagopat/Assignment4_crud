@@ -52,7 +52,7 @@ def WriteDatabase(allAccounts):
         acc_type = acc.getAccountType()
         acc_interest = acc.getRateOfInterest()
         acc_balance = acc.getCurrentBalance()
-        if ( account.ACC_TYPE_CHEQUI == acc_type):
+        if ( account.ACC_TYPE_CHEQUING == acc_type):
             acc_overdraft_minbalance = acc.getOverdraftLimit()
         elif ( account.ACC_TYPE_SAVING == acc_type):
             acc_overdraft_minbalance = acc.getMinimumBalance()
