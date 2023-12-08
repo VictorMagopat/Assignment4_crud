@@ -55,12 +55,17 @@ class Bank:
     databaseAcc = []
     lastAccountNumber = 0
 
-    # Define a constructor that populates the account list with data from json file
+    # method that populates the account list with data from json file
     def openDatabase(self):
         self.databaseAcc.clear()
         self.databaseAcc = storage.ReadDatabase()
         listLenght = len(self.databaseAcc)
         self.lastAccountNumber = listLenght
+        pass
+    
+    # method that writes the account list to the json file
+    def writeDatabase(self):        
+        storage.WriteDatabase(self.databaseAcc)
         pass
 
     # return the number of accounts
@@ -130,7 +135,9 @@ class Bank:
 if __name__ == "__main__":
 
     print("Testing the bank implementation!")
-    # initialize using the hardcoded values
+
+    # init_mode = 1 initialize using the hardcoded values
+    # init_mode = 2 initialize using database.json
     init_mode = 2
     if ( 1 == init_mode):
         # print the list of the test accounts
@@ -146,9 +153,12 @@ if __name__ == "__main__":
 
         # initialize the bank account
         myBank = Bank(ExistingAccounts)
-    else:
+    elif ( 2 == init_mode):
         myBank = Bank()
         myBank.openDatabase()
+    else:
+        print("Critical failure in testing the bank module")
+        exit()
 
     noOfAccounts = myBank.getLastAccountNumber() #Bank.lastAccountNumber 
     print("Last account number is: ", str(noOfAccounts))
@@ -210,3 +220,12 @@ if __name__ == "__main__":
         myIndex += 1
     print("Finished printing the updated bank list.")
 
+    if ( 1 == init_mode):
+        print("There is nothing to save to file")
+    elif (2 == init_mode):
+        myBank.writeDatabase()
+        print("Data was saved succesfully saved to file.")
+    else:
+        print("Critical failure in testing the bank module")
+    
+    exit()
