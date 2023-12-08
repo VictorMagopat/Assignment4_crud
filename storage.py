@@ -6,7 +6,7 @@
 import account
 import json
 
-# Read the database.json file and store the data in a variable
+# Read the database.json file and return the accounts list
 def ReadDatabase():
     with open('database.json', 'r') as file:
         data_from_file = json.load(file)
@@ -20,22 +20,26 @@ def ReadDatabase():
     index = 0
     while index < listLenght:
         currentAcc = data_from_file[index]
-        if ( 1 == currentAcc['type']):
+        if ( account.ACC_TYPE_CHEQUING == currentAcc['type']):
             newChequingAcc.setAccountHolderName(currentAcc['name'])
             newChequingAcc.setAccountNumber(currentAcc['account_no'])
             newChequingAcc.setRateOfInterest(currentAcc['interest'])
             newChequingAcc.setOverdraftLimit(currentAcc['overdraft_minbalance'])
             existingAccounts.append(newChequingAcc)
-        if ( 2 == currentAcc['type']):
+        elif ( account.ACC_TYPE_SAVING == currentAcc['type']):
             newSavingAcc.setAccountHolderName(currentAcc['name'])
             newSavingAcc.setAccountNumber(currentAcc['account_no'])
             newSavingAcc.setRateOfInterest(currentAcc['interest'])
             newSavingAcc.setMinimumBalance(currentAcc['overdraft_minbalance'])
             existingAccounts.append(newSavingAcc)
+        else:
+            print("Critical error reading the acc_type in json file.")
+            exit()
         index += 1
 
     return existingAccounts
 
+# Write the accounts list to the database.json
 def WriteDatabase(allAccounts):
     allJsonAccounts = []
     listLenght = len(allAccounts)
@@ -48,10 +52,13 @@ def WriteDatabase(allAccounts):
         acc_type = acc.getAccountType()
         acc_interest = acc.getRateOfInterest()
         acc_balance = acc.getCurrentBalance()
-        if ( 1 == acc_type):
+        if ( account.ACC_TYPE_CHEQUI == acc_type):
             acc_overdraft_minbalance = acc.getOverdraftLimit()
-        if ( 2 == acc_type):
+        elif ( account.ACC_TYPE_SAVING == acc_type):
             acc_overdraft_minbalance = acc.getMinimumBalance()
+        else:
+            print("Critical error reading the acc_type in json file.")
+            exit()
 
         json_acc = {"account_no": acc_no,
         "name": acc_name,
@@ -87,14 +94,14 @@ if __name__ == "__main__":
     print("Finished printing the test list.")
 
     addChequingAcc = account.ChequingAccount()
-    addChequingAcc.setAccountHolderName("Saint Nicholas")
+    addChequingAcc.setAccountHolderName("Saint George")
     addChequingAcc.setAccountNumber(1206)
     addChequingAcc.setRateOfInterest(0.5)
     addChequingAcc.setOverdraftLimit(2003)
     ExistingAccounts.append(addChequingAcc)
 
     addSavingAcc = account.SavingAccount()
-    addSavingAcc.setAccountHolderName("Kris Kringle")
+    addSavingAcc.setAccountHolderName("King Arthur")
     addSavingAcc.setAccountNumber(1225)
     addSavingAcc.setRateOfInterest(1.1)
     addSavingAcc.setMinimumBalance(522)
