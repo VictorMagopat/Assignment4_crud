@@ -41,11 +41,6 @@ class Bank:
         self.lastAccountNumber = lastAccountNumber
         self.bankName = bankName
 
-        # Define a constructor that populates the account list with data from json file
-        self.databaseAcc = storage.ReadDatabase()
-        pass
-
-
         # Define a constructor that populates the account list with hardcoded of three 
         # ChequingAccount instances and three SavingsAccount instances. 
         listLenght = len(existingAccounts)
@@ -58,8 +53,20 @@ class Bank:
 
     # the bank class has a List of Account objects
     databaseAcc = []
+    lastAccountNumber = 0
 
+    # Define a constructor that populates the account list with data from json file
+    def openDatabase(self):
+        self.databaseAcc.clear()
+        self.databaseAcc = storage.ReadDatabase()
+        listLenght = len(self.databaseAcc)
+        self.lastAccountNumber = listLenght
+        pass
+
+    # return the number of accounts
     def getLastAccountNumber(self):
+        listLenght = len(self.databaseAcc)
+        self.lastAccountNumber = listLenght 
         return self.lastAccountNumber    
     
     # instantiates a saving account and appends it to the list
@@ -123,22 +130,27 @@ class Bank:
 if __name__ == "__main__":
 
     print("Testing the bank implementation!")
+    # initialize using the hardcoded values
+    init_mode = 2
+    if ( 1 == init_mode):
+        # print the list of the test accounts
+        listLenght = len(ExistingAccounts) 
+        print("There are :", str(listLenght), "accounts in the test list.")
 
-    # print the list of the test accounts
-    listLenght = len(ExistingAccounts) 
-    print("There are :", str(listLenght), "accounts in the test list.")
+        myIndex = 0
+        while myIndex < listLenght:
+            account_name = ExistingAccounts[myIndex].getAcountHolderName()
+            print("Account name: ", account_name, "type:", ExistingAccounts[myIndex].getAccountType())
+            myIndex += 1
+        print("Finished printing the test list.")
 
-    myIndex = 0
-    while myIndex < listLenght:
-        account_name = ExistingAccounts[myIndex].getAcountHolderName()
-        print("Account name: ", account_name, "type:", ExistingAccounts[myIndex].getAccountType())
-        myIndex += 1
-    print("Finished printing the test list.")
+        # initialize the bank account
+        myBank = Bank(ExistingAccounts)
+    else:
+        myBank = Bank()
+        myBank.openDatabase()
 
-    # initialize the bank account
-    myBank = Bank(ExistingAccounts)
-
-    noOfAccounts = myBank.lastAccountNumber  #myBank.getLastAccountNumber() #Bank.lastAccountNumber 
+    noOfAccounts = myBank.getLastAccountNumber() #Bank.lastAccountNumber 
     print("Last account number is: ", str(noOfAccounts))
     nameOfBank = myBank.bankName
     print("Bank name is: ", nameOfBank )
@@ -152,34 +164,35 @@ if __name__ == "__main__":
         myIndex += 1
     print("Finished printing the bank list.")
 
-    searchAccNo = 5
-    print("Search by Account Number")
-    foundAcc = myBank.searchAccountByNo(searchAccNo, account.ACC_TYPE_SAVING)
-    if foundAcc < 0:
-        print("The Saving account number", str(searchAccNo), "does't exist")
-    else:
-        print("Found Saving account number: ", str(searchAccNo))    
+    if ( 1 == init_mode):
+        searchAccNo = 5
+        print("Search by Account Number")
+        foundAcc = myBank.searchAccountByNo(searchAccNo, account.ACC_TYPE_SAVING)
+        if foundAcc < 0:
+            print("The Saving account number", str(searchAccNo), "does't exist")
+        else:
+            print("Found Saving account number: ", str(searchAccNo))    
 
-    foundAcc = myBank.searchAccountByNo(searchAccNo, account.ACC_TYPE_CHEQUING)
-    if foundAcc < 0:
-        print("The Chequing account number", str(searchAccNo), "does't exist")
-    else:
-        print("Found Chequing account number: ", str(searchAccNo))      
+        foundAcc = myBank.searchAccountByNo(searchAccNo, account.ACC_TYPE_CHEQUING)
+        if foundAcc < 0:
+            print("The Chequing account number", str(searchAccNo), "does't exist")
+        else:
+            print("Found Chequing account number: ", str(searchAccNo))      
 
-    searchAccName = "Anne North"
-    print("Search by Account Name")
-    foundAcc = myBank.searchAccountByName(searchAccName, account.ACC_TYPE_SAVING)
-    if foundAcc < 0:
-        print("There is no Saving account with the name", searchAccName, ". It does't exist.")
-    else:
-        print("Found Saving account: ", searchAccName, "with account number", str(foundAcc))
+        searchAccName = "Anne North"
+        print("Search by Account Name")
+        foundAcc = myBank.searchAccountByName(searchAccName, account.ACC_TYPE_SAVING)
+        if foundAcc < 0:
+            print("There is no Saving account with the name", searchAccName, ". It does't exist.")
+        else:
+            print("Found Saving account: ", searchAccName, "with account number", str(foundAcc))
 
-    print("Search by Account Name")
-    foundAcc = myBank.searchAccountByName(searchAccName, account.ACC_TYPE_CHEQUING)
-    if foundAcc < 0:
-        print("There is no Chequing account with the name", searchAccName, ". It does't exist.")
-    else:
-        print("Found Chequing account: ", searchAccName, "with account number", str(foundAcc))
+        print("Search by Account Name")
+        foundAcc = myBank.searchAccountByName(searchAccName, account.ACC_TYPE_CHEQUING)
+        if foundAcc < 0:
+            print("There is no Chequing account with the name", searchAccName, ". It does't exist.")
+        else:
+            print("Found Chequing account: ", searchAccName, "with account number", str(foundAcc))
 
     newAccHolderName = "Nora East"
     print("Create new Chequing Account for: ", newAccHolderName)
@@ -190,7 +203,7 @@ if __name__ == "__main__":
     myBank.openAccountSaving(newAccHolderName)
 
     myIndex = 0
-    while myIndex < myBank.lastAccountNumber:
+    while myIndex < myBank.getLastAccountNumber():
         account_name = myBank.databaseAcc[myIndex].getAcountHolderName()
         account_no = myBank.databaseAcc[myIndex].getAccountNumber()
         print("Account name: ", account_name, "Account number: ", str(account_no))
