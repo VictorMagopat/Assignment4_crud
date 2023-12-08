@@ -46,6 +46,7 @@ class Application:
 
     # initialize the bank database
     famousBank = bank.Bank(bank.ExistingAccounts)
+    famousBank.openDatabase()
 
     # the account index that is served now
     serveAccIndex = int(0)    
