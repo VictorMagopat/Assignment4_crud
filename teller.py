@@ -219,8 +219,13 @@ class Application:
                     print("Your account has a new balance of: ", str(balance))
 
             # close this account - delete
-            elif menu_start == "4":
-                print("Are you sure you want to delete this account?")
+            elif menu_start == "4":                
+                while True:
+                    confirm = input("Are you sure you want to delete this account? Type: YES")
+                    if ( "YES" == confirm)
+                        break;
+                self.famousBank.deleteAccountNumber(self.serveAccIndex)
+                print("The account was deleted.")
             # return to main menu
             elif menu_start == "5":
                 print("You selected to return to main menu")
