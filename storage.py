@@ -6,81 +6,132 @@
 import account
 import json
 
-# Read the database.json file and return the accounts list
-def ReadDatabase():
-    with open('database.json', 'r') as file:
-        data_from_file = json.load(file)
-    
-    listLenght = len(data_from_file)
+# String definitions for the JSON fields
+strAccNo = "account_no"
+strAccName = "name"
+strAccType = "type"
+strAccInterest = "interest"
+strAccBalance = "balance"
+strAccOverdraftMinBalance = "overdraft_minbalance"
 
-    newSavingAcc = account.SavingAccount()
-    newChequingAcc = account.ChequingAccount()
-
-    existingAccounts = []
-    index = 0
-    while index < listLenght:
-        currentAcc = data_from_file[index]
-        if ( account.ACC_TYPE_CHEQUING == currentAcc['type']):
-            newChequingAcc.setAccountHolderName(currentAcc['name'])
-            newChequingAcc.setAccountNumber(currentAcc['account_no'])
-            newChequingAcc.setRateOfInterest(currentAcc['interest'])
-            newChequingAcc.setOverdraftLimit(currentAcc['overdraft_minbalance'])
-            existingAccounts.append(newChequingAcc)
-        elif ( account.ACC_TYPE_SAVING == currentAcc['type']):
-            newSavingAcc.setAccountHolderName(currentAcc['name'])
-            newSavingAcc.setAccountNumber(currentAcc['account_no'])
-            newSavingAcc.setRateOfInterest(currentAcc['interest'])
-            newSavingAcc.setMinimumBalance(currentAcc['overdraft_minbalance'])
-            existingAccounts.append(newSavingAcc)
-        else:
-            print("Critical error reading the acc_type in json file.")
-            exit()
-        index += 1
-
-    return existingAccounts
-
-# Write the accounts list to the database.json
-def WriteDatabase(allAccounts):
-    allJsonAccounts = []
-    listLenght = len(allAccounts)
-    
-    index = 0
-    while index < listLenght:
-        acc = allAccounts[index]
-        acc_no = acc.getAccountNumber()
-        acc_name = acc.getAcountHolderName()
-        acc_type = acc.getAccountType()
-        acc_interest = acc.getRateOfInterest()
-        acc_balance = acc.getCurrentBalance()
-        if ( account.ACC_TYPE_CHEQUING == acc_type):
-            acc_overdraft_minbalance = acc.getOverdraftLimit()
-        elif ( account.ACC_TYPE_SAVING == acc_type):
-            acc_overdraft_minbalance = acc.getMinimumBalance()
-        else:
-            print("Critical error reading the acc_type in json file.")
-            exit()
-
-        json_acc = {"account_no": acc_no,
-        "name": acc_name,
-        "type": acc_type,
-        "interest": acc_interest,
-        "balance": acc_balance,
-        "overdraft_minbalance": acc_overdraft_minbalance }
-        allJsonAccounts.append(json_acc)
+# This is the Storage class. This class is loading and saving the database from/to file.
+# Implements the persisten storage using the JSON format and the database.json file.
+class Storage:
+    # Read the database.json file and return the accounts list
+    def ReadDatabase(self):
+        with open('database.json', 'r') as file:
+            try:
+                data_from_file = json.load(file)
+            except:
+                print("Error: the database.json file contains invalid data.")
+                exit()
         
-        index += 1
+        listLenght = len(data_from_file)
 
-    with open('database.json', 'w') as file:
-        json.dump(allJsonAccounts, file, indent=2)
+        existingAccounts = []
+        index = 0
+        while index < listLenght:
+            currentAcc = data_from_file[index]
+            self.ValidateJsonAcc(currentAcc)
+            if ( account.ACC_TYPE_CHEQUING == currentAcc[strAccType]):
+                newChequingAcc = account.ChequingAccount()
+                newChequingAcc.setAccountHolderName(currentAcc[strAccName])
+                newChequingAcc.setAccountNumber(currentAcc[strAccNo])                
+                newChequingAcc.setRateOfInterest(currentAcc[strAccInterest])
+                newChequingAcc.deposit(currentAcc[strAccBalance])
+                newChequingAcc.setOverdraftLimit(currentAcc[strAccOverdraftMinBalance])
+                existingAccounts.append(newChequingAcc)
+            elif ( account.ACC_TYPE_SAVING == currentAcc[strAccType]):
+                newSavingAcc = account.SavingAccount()
+                newSavingAcc.setAccountHolderName(currentAcc[strAccName])
+                newSavingAcc.setAccountNumber(currentAcc[strAccNo])
+                newSavingAcc.setRateOfInterest(currentAcc[strAccInterest])
+                newSavingAcc.deposit(currentAcc[strAccBalance])
+                newSavingAcc.setMinimumBalance(currentAcc[strAccOverdraftMinBalance])
+                existingAccounts.append(newSavingAcc)
+            else:
+                print("Critical error reading the acc_type in the json file.")
+                exit()
+            index += 1
 
+        return existingAccounts
+
+    # Write the accounts list to the database.json
+    def WriteDatabase(self, allAccounts):
+        allJsonAccounts = []
+        listLenght = len(allAccounts)
+        
+        index = 0
+        while index < listLenght:
+            acc = allAccounts[index]
+            acc_no = acc.getAccountNumber()
+            acc_name = acc.getAcountHolderName()
+            acc_type = acc.getAccountType()
+            acc_interest = acc.getRateOfInterest()
+            acc_balance = acc.getCurrentBalance()
+            if ( account.ACC_TYPE_CHEQUING == acc_type):
+                acc_overdraft_minbalance = acc.getOverdraftLimit()
+            elif ( account.ACC_TYPE_SAVING == acc_type):
+                acc_overdraft_minbalance = acc.getMinimumBalance()
+            else:
+                print("Critical error reading the acc_type in json file.")
+                exit()
+
+            json_acc = {strAccNo: acc_no,
+            strAccName: acc_name,
+            strAccType: acc_type,
+            strAccInterest: acc_interest,
+            strAccBalance: acc_balance,
+            strAccOverdraftMinBalance: acc_overdraft_minbalance }
+            allJsonAccounts.append(json_acc)
+            
+            index += 1
+
+        with open('database.json', 'w') as file:
+            json.dump(allJsonAccounts, file, indent=2)
+
+    # validates the JSON data format
+    def ValidateJsonAcc(self, currentAcc):
+        try:
+            valid = currentAcc[strAccType]
+        except:
+            print("Error: the database.json file contains invalid type-data.")
+            exit()
+        try:
+            valid = currentAcc[strAccName]
+        except:
+            print("Error: the database.json file contains invalid name-data.")
+            exit()
+        try:
+            valid = currentAcc[strAccNo]
+        except:
+            print("Error: the database.json file contains invalid account_no-data.")
+            exit()
+        try:
+            valid = currentAcc[strAccInterest]
+        except:
+            print("Error: the database.json file contains invalid interest-data.")
+            exit()
+        try:
+            valid = currentAcc[strAccBalance]
+        except:
+            print("Error: the database.json file contains invalid balance-data.")
+            exit()
+        try:
+            valid = currentAcc[strAccOverdraftMinBalance]
+        except:
+            print("Error: the database.json file contains invalid overdraft_minbalance-data.")
+            exit()
 
 
 # this code is testing the functionality of the storage module
 if __name__ == "__main__":
     print("Testing the storage implementation!")
     
+    testStorage = Storage()
+
     ExistingAccounts = []
-    ExistingAccounts = ReadDatabase()
+    ExistingAccounts = testStorage.ReadDatabase()
 
     # print the list of the test accounts
     listLenght = len(ExistingAccounts) 
@@ -117,6 +168,6 @@ if __name__ == "__main__":
         myIndex += 1
     print("Finished printing the new list.")
 
-    WriteDatabase(ExistingAccounts)
+    testStorage.WriteDatabase(ExistingAccounts)
 
     exit()
