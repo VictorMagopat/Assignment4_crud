@@ -4,6 +4,7 @@
 # Implements all the interaction between the user and the Bank. 
 # No other class is allowed to interact (input or print) with the end user. 
 
+import os
 import account
 import bank
 
@@ -31,7 +32,8 @@ AccountOperationsMenu = """Account menu:
             <1> Check Balance
             <2> Deposit
             <3> Withdraw
-            <4> Return to main menu"""
+            <4> Delete
+            <5> Return to main menu"""
 
 # Account type menu
 AccountTypeMenu = """What account type would like to open:
@@ -44,9 +46,16 @@ AccountTypeMenu = """What account type would like to open:
 # bank class.
 class Application:
 
-    # initialize the bank database
+    # initialize the bank database 
     famousBank = bank.Bank(bank.ExistingAccounts)
-    famousBank.openDatabase()
+
+    # load database from file if the file is present 
+    file_path = './database.json'
+    if os.path.exists(file_path):
+        print("Loading database from file...")
+        famousBank.openDatabase()
+    else:
+        print("The database file does not exist, running in simulation mode!")
 
     # the account index that is served now
     serveAccIndex = int(0)    
@@ -209,8 +218,11 @@ class Application:
                     balance = self.famousBank.databaseAcc[self.serveAccIndex].getCurrentBalance()
                     print("Your account has a new balance of: ", str(balance))
 
-            # return to main menu
+            # close this account - delete
             elif menu_start == "4":
+                print("Are you sure you want to delete this account?")
+            # return to main menu
+            elif menu_start == "5":
                 print("You selected to return to main menu")
                 servingAccount = False
                 
@@ -218,7 +230,7 @@ class Application:
                 print(GoodbyeMessage)
                 exit()
             else:
-                print("Please enter: <1>, <2>, <3> or <4>") 
+                print("Please enter: <1>, <2>, <3>, <4> or <5>") 
         pass
 
     def showOpenAccountMenu(self):
