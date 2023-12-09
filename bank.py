@@ -72,15 +72,29 @@ class Bank:
     def getLastAccountNumber(self):
         listLenght = len(self.databaseAcc)
         self.lastAccountNumber = listLenght 
-        return self.lastAccountNumber    
+        return self.lastAccountNumber
     
+    # removes the account at index accNo; return -1 if failed
+    # or the total no of accounts
+    def deleteAccountNumber(self, accNo):
+        opComplete = -1
+        listLenght = len(self.databaseAcc)
+        if (accNo > listLenght):
+            opComplete = -1
+        else:
+            self.databaseAcc.pop(accNo)
+            listLenght = len(self.databaseAcc)
+            self.lastAccountNumber = listLenght
+            opComplete = listLenght
+        return opComplete
+
     # instantiates a saving account and appends it to the list
     def openAccountSaving(self, holderName: str):
         openNewAcc = account.SavingAccount()
         openNewAcc.setAccountHolderName(holderName)
         
-        self.lastAccountNumber += 1
-        openNewAcc.setAccountNumber(self.lastAccountNumber)
+        self.lastAccountNumber = len(self.databaseAcc) + 1
+        openNewAcc.setAccountNumber(self.lastAccountNumber + 100)
         
         self.databaseAcc.append(openNewAcc)        
         pass
@@ -90,8 +104,8 @@ class Bank:
         openNewAcc = account.ChequingAccount()
         openNewAcc.setAccountHolderName(holderName)
         
-        self.lastAccountNumber += 1
-        openNewAcc.setAccountNumber(self.lastAccountNumber)
+        self.lastAccountNumber = len(self.databaseAcc) + 1
+        openNewAcc.setAccountNumber(self.lastAccountNumber + 100)
 
         self.databaseAcc.append(openNewAcc)
         pass
