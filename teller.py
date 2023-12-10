@@ -66,7 +66,7 @@ class Application:
         print(WelcomeMessage)
 
         self.showMainMenu()
-
+        self.famousBank.writeDatabase()
         print(GoodbyeMessage)
         pass
 
@@ -222,12 +222,13 @@ class Application:
             elif menu_start == "4":                
                 while True:
                     confirm = input("Are you sure you want to delete this account? Type: YES")
-                    if ( "YES" == confirm)
-                        break;
+                    if ( "YES" == confirm):
+                        break
                 self.famousBank.deleteAccountNumber(self.serveAccIndex)
                 print("The account was deleted.")
             # return to main menu
             elif menu_start == "5":
+                self.famousBank.writeDatabase()
                 print("You selected to return to main menu")
                 servingAccount = False
                 
@@ -247,10 +248,12 @@ class Application:
             if accType == "1":
                 self.famousBank.openAccountSaving(accName)
                 print("Congratulation", accName, "! Your Savingng Account is opened!")
+                self.famousBank.writeDatabase()
                 break  
             elif accType == "2":                
                 self.famousBank.openAccountChequing(accName)
                 print("Congratulation", accName, "! Your Chequing Account is opened!")
+                self.famousBank.writeDatabase()
                 break
             elif accType == "q":
                 print(GoodbyeMessage)
