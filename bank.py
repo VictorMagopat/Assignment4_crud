@@ -54,18 +54,19 @@ class Bank:
     # the bank class has a List of Account objects
     databaseAcc = []
     lastAccountNumber = 0
+    persistentData = storage.Storage()
 
     # method that populates the account list with data from json file
     def openDatabase(self):
         self.databaseAcc.clear()
-        self.databaseAcc = storage.ReadDatabase()
+        self.databaseAcc = self.persistentData.ReadDatabase()
         listLenght = len(self.databaseAcc)
         self.lastAccountNumber = listLenght
         pass
     
     # method that writes the account list to the json file
     def writeDatabase(self):        
-        storage.WriteDatabase(self.databaseAcc)
+        self.persistentData.WriteDatabase(self.databaseAcc)
         pass
 
     # return the number of accounts
